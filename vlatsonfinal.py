@@ -8,53 +8,49 @@ import matplotlib.image as mpimg
 import random
 
 # loads data set
-from keras.datasets import cifar100
-(x_train, y_train), (x_test, y_test) = cifar100.load_data()
+image_dir = "data"
+img_height = 224
+img_width = 224
 
-# sns.countplot(x=y_train)
-# plt.show()
+input_shape = (224, 224, 3)
 
-# check values to be sure there are no values that are not numbers
-print("Any NaN Training:", np.isnan(x_train).any())
-print("Any NaN Testing:", np.isnan(x_test).any())
+dataset = tf.keras.utils.image_dataset_from_directory(
+    image_dir,
+    image_size=(img_height, img_width),
+    batch_size=32
+)
 
-# tell model what shape to expect
-# 1 - grayscale, 3 - RGB
-input_shape = (32, 32, 3) 
+# Normalize images
+dataset = dataset.map(lambda x, y: (x/255.0, y))
 
-# reshape training and testing data
-x_train = x_train.astype('float32') / 255.0
-x_test = x_test.astype('float32') / 255.0
-
-# convert our labels to be one-hot, not sparse
-from keras.utils import to_categorical
-y_train = to_categorical(y_train, 100)
-y_test = to_categorical(y_test, 100)
-
-# show an example image from MNIST
-plt.imshow(x_train[random.randint(0, 5999)][:,:,0])
-plt.show()
+# Show one example image
+for images, labels in dataset.take(1):
+    idx = random.randint(0, images.shape[0] - 1)
+    plt.imshow(images[idx].numpy())
+    plt.title(f"Label: {labels[idx].numpy()}")
+    plt.axis("off")
+    plt.show()
 
 
 
 batch_size = 128
-num_classes = 100
+num_classes = 8
 epochs = 5
 
 # builds model
 # Model 1
 model = tf.keras.models.Sequential(
     [
-        tf.keras.layers.Conv2D(64, (5,5), padding='same', activation='relu', input_shape=input_shape),
-        tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu', input_shape=input_shape),
-        tf.keras.layers.MaxPool2D(),
-        tf.keras.layers.Dropout(0.30), 
-        tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu', input_shape=input_shape),
-        tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu', input_shape=input_shape),
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(num_classes, activation='softmax'),
-    ]
-)
+    tf.keras.layers.Conv2D(64, (5,5), padding='same', activation='relu',input_shape=input_shape),  # only FIRST layer
+    tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu'),
+    tf.keras.layers.MaxPool2D(),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu'),
+    tf.keras.layers.Conv2D(64, (5,5), padding='same', activation='relu'),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(num_classes, activation='softmax')
+])
+
 # Model 2
 # model = tf.keras.models.Sequential(
 #     [
@@ -69,27 +65,56 @@ model = tf.keras.models.Sequential(
 #     ]
 # )
 
-model.compile(optimizer='adam',loss='categorical_crossentropy', metrics=['acc'])
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
 
-history = model.fit(x_train, y_train,epochs=5,validation_data=(x_test, y_test))
+dataset = tf.keras.utils.image_dataset_from_directory(
+    image_dir,
+    image_size=(img_height, img_width),
+    batch_size=32,
+    validation_split=0.2,
+    subset="both",
+    seed=123
+)
+
+train_ds = dataset[0]
+val_ds   = dataset[1]
+
+train_ds = train_ds.map(lambda x, y: (x/255., y))
+val_ds   = val_ds.map(lambda x, y: (x/255., y))
+
+history = model.fit(
+    train_ds,
+    epochs=5,
+    validation_data=val_ds
+)
 
 
 # plot out training and validation accuracy and loss
 fig, ax = plt.subplots(2,1)
+fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
-ax[0].plot(history.history['loss'], color = 'b', label='Training Loss')
-ax[0].plot(history.history['val_loss'], color = 'r', label='Validation Loss')
-legend = ax[0].legend(loc='best', shadow=True)
+# ---- LOSS ----
+ax[0].plot(history.history['loss'], color='b', label='Training Loss')
+ax[0].plot(history.history['val_loss'], color='r', label='Validation Loss')
+ax[0].legend(loc='best', shadow=True)
 ax[0].set_title('Loss')
 ax[0].set_xlabel('Epochs')
 ax[0].set_ylabel('Loss')
 
-ax[1].plot(history.history['acc'], color = 'b', label='Training Accuracy')
-ax[1].plot(history.history['val_acc'], color = 'r', label='Validation Accuracy')
-legend = ax[1].legend(loc='best', shadow=True)
+# ---- ACCURACY ----
+ax[1].plot(history.history['accuracy'], color='b', label='Training Accuracy')
+ax[1].plot(history.history['val_accuracy'], color='r', label='Validation Accuracy')
+ax[1].legend(loc='best', shadow=True)
 ax[1].set_title('Accuracy')
 ax[1].set_xlabel('Epochs')
 ax[1].set_ylabel('Accuracy')
+
+plt.show()
+
 
 plt.tight_layout()
 plt.show()
