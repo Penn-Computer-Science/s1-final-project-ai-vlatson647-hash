@@ -35,18 +35,18 @@ for images, labels in dataset.take(1):
 
 batch_size = 128
 num_classes = 8
-epochs = 5
+epochs = 10
 
 # builds model
 # Model 1
 model = tf.keras.models.Sequential(
     [
-    tf.keras.layers.Conv2D(64, (5,5), padding='same', activation='relu',input_shape=input_shape),  # only FIRST layer
-    tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu'),
+    tf.keras.layers.Conv2D(64, (1,1), padding='same', activation='relu',input_shape=input_shape),  # only FIRST layer
+    tf.keras.layers.Conv2D(64, (1,1), padding='same', activation='relu'),
     tf.keras.layers.MaxPool2D(),
     tf.keras.layers.Dropout(0.25),
     tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu'),
-    tf.keras.layers.Conv2D(64, (5,5), padding='same', activation='relu'),
+    tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu'),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(num_classes, activation='softmax')
 ])
@@ -88,7 +88,7 @@ val_ds   = val_ds.map(lambda x, y: (x/255., y))
 
 history = model.fit(
     train_ds,
-    epochs=5,
+    epochs= 5,
     validation_data=val_ds
 )
 
