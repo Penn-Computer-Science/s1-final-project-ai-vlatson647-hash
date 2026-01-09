@@ -70,11 +70,11 @@ For RL:
 
 ### 4. Reflection & Analysis
 At the end of this README, include a reflection section with:
-- Which training run performed best and why  
-- What hyperparameters mattered most  
-- What surprised you  
-- How your dataset quality affected results  
-- What you would do differently with more time  
+- Which training run performed best and why  Pretty much all training performed best. Dependning on the amount of epochs I was getting a consistent 100% accuracy
+- What hyperparameters mattered most  I feel the dropout layers and epochs mattered since those would have the biggest effect on my accuracy and overall data when changed
+- What surprised you  The fact I got 100% accuracy after the 3rd of 4th epoch
+- How your dataset quality affected results  I feel since I had a lower number of images that it really effected my data since there were very few samples for the AI to work off of
+- What you would do differently with more time  Probably add more images either to new ctageories or existing classifications in order to boost data and get better accuracy numbers
 
 ---
 
