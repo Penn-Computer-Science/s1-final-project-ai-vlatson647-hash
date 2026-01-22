@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Wuud-5WI)
 # Topics in CS - Project 5: AI (Final Project for Fall Semester)
 
 Welcome to your final project for the AI unit! This assignment serves as your final exam and challenges you to design, train, evaluate, and present an AI system of your choice.
@@ -69,11 +70,11 @@ For RL:
 
 ### 4. Reflection & Analysis
 At the end of this README, include a reflection section with:
-- Which training run performed best and why  
-- What hyperparameters mattered most  
-- What surprised you  
-- How your dataset quality affected results  
-- What you would do differently with more time  
+- Which training run performed best and why? 
+- What hyperparameters mattered most?  
+- What surprised you?  
+- How your dataset quality affected results?  
+- What you would do differently with more time?  
 
 ---
 
@@ -176,16 +177,16 @@ model = keras.models.load_model("model.keras")
 ## Reflection - Complete this once you have finished!
 
 **Best performing model/run and why:**  
-*(Write here)*  
+Pretty much all training performed best. Dependning on the amount of epochs I was getting a consistent 100% accuracy 
 
 **Most important hyperparameters and effects:**  
-*(Write here)*  
+I feel the dropout layers and epochs mattered since those would have the biggest effect on my accuracy and overall data when changed 
 
 **Dataset limitations or biases:**  
-*(Write here)*  
+I feel since I had a lower number of images that it really effected my data since there were very few samples for the AI to work off of
 
 **Unexpected results:**  
-*(Write here)*  
+The fact I got 100% accuracy after the 3rd of 4th epoch
 
 **What you would improve with more time:**  
-*(Write here)*  
+Probably add more images either to new ctageories or existing classifications in order to boost data and get better accuracy numbers
